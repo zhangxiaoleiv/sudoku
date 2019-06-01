@@ -1,0 +1,35 @@
+
+#table{
+    box-sizing: border-box;
+    width : 550px;
+    height: 550px;
+    border : 2px solid #555;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: space-around;
+}
+
+#table div{
+    width : 176px;
+    height: 176px;
+    background-color: #EEE;
+}
+
+#table span{
+    float: left;
+    text-align: center;
+    display: block;
+    border : 1px solid #BBB;
+    width : 56px;
+    height: 56px;
+    line-height: 56px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+#fileId{
+    width: 5em;
+    text-align: center;
+}
