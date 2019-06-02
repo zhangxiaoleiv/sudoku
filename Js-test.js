@@ -1,6 +1,10 @@
 ﻿
 let originElelist = document.querySelectorAll("#table span");
 let eleList = new Array(9);
+let log = console.table;
+function logs () {
+    log(numList);
+}
 
 function pushNumList(index, ...rest) {
     eleList[index] = [];
@@ -99,6 +103,8 @@ function initCube () {
                 8 : 0,
                 9 : 0,
 
+                ele : eleList[i][j],
+
                 refresh : function () {
 
                 },
@@ -107,13 +113,13 @@ function initCube () {
                     
                     let max = 0, index;
                     for (let i = 1; i <= 9; i++) {
-                        if (this[i] > max) {
+                        if (this[i] !== NaN && this[i] > max) {
                             max = this[i];
                             index = i;
                         }
                     }
                     return [index, max];
-                   
+
                 }
             })
         }
@@ -140,35 +146,54 @@ function onlondCube(x, y, strNum, base) {
 
 document.querySelector("#gogogo").addEventListener("click", function() {
 
+    readTable();
+
     let tmp;
 
     //横竖
     
-
     for (let i = 0; i < 9; i++) {
 
         let rowList = [];
 
         for (let r = 0; r < 9; r ++) {
+
             if (numList[i][r][0] !== "") {
+
                 rowList.push(numList[i][r][0])
-            }
+
+                let t = numList[i][r][0];
+
+                for (let ri = 0; ri < 9; ri ++) {
+                    numList[i][ri][t] = NaN;
+                }
+            } 
         }
 
         
-        //横向遍历
+        //纵向
         for (let c = 0; c < 9; c++) {
 
             let colList = [];
            
             if (numList[i][c][0] === "") {
+                //横向
                 for (let j = 0; j < 9; j++) {
+
                     if (numList[j][c][0] !== "") {
+
                         colList.push(numList[j][c][0]);
+
+                        let t = numList[j][c][0];
+
+                        for (let ri = 0; ri < 9; ri ++) {
+                            numList[ri][c][t] = NaN;
+                        }
+
                     }
                 }
             }
-
+    
             if (numList[i][c][0] === "") {
                 tmp = comparePoint(rowList, colList).join("");
                 onlondCube(i, c, tmp, 9);
@@ -177,12 +202,10 @@ document.querySelector("#gogogo").addEventListener("click", function() {
     }
 
     
-
     //第一行
     simpleNine(0, 2, 0, 2);
     simpleNine(3, 5, 0, 2);
     simpleNine(6, 8, 0, 2);
-   
     //第二行
     simpleNine(0, 2, 3, 5);
     simpleNine(3, 5, 3, 5);
@@ -191,35 +214,6 @@ document.querySelector("#gogogo").addEventListener("click", function() {
     simpleNine(0, 2, 6, 8);
     simpleNine(3, 5, 6, 8);
     simpleNine(6, 8, 6, 8);
-
-
-
-    //交叉打分
-    /*
-
-    let vtmp;
-
-    for (let i = 1; i <= 9; i++) {
-        vtmp  = rowV32(i).split("+"); //3个数组
-        for (let j = 0; j < 3; j++) {
-            let tt = vtmp[j].split(",");
-            for (let k = 0; k < 3; k++) {
-                if (tt[k])
-            }
-        }
-    }
-    */
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -232,20 +226,7 @@ document.querySelector("#gogogo").addEventListener("click", function() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//输出结果！
 document.querySelector("#testShow").onclick = function () {
     for (let i = 0; i < 9; i ++) {
         for (let j = 0; j < 9; j ++) {
@@ -261,10 +242,8 @@ document.querySelector("#testShow").onclick = function () {
 }
 
 
-
 function simpleNine (rowStart, rowEnd, colStart, colEnd) {
 
-    
     let nineList = [];
 
     for (let i = rowStart; i <= rowEnd; i++) {
@@ -275,7 +254,6 @@ function simpleNine (rowStart, rowEnd, colStart, colEnd) {
         }
     }
 
-
     let tmp = nineList.length ? comparePoint(nineList).join("") : false;
 
     if(tmp) {
@@ -284,14 +262,23 @@ function simpleNine (rowStart, rowEnd, colStart, colEnd) {
             for (let j = colStart; j <= colEnd; j++) {
                 if (numList[j][i][0] === "") {
                     onlondCube(j, i, tmp, 9);
+                } else {
+                    //有数字
+                    let t = numList[j][i][0];
+                    for (let i = rowStart; i <= rowEnd; i++) {
+                        for (let j = colStart; j <= colEnd; j++) {
+                            numList[j][i][t] = NaN;
+                        }
+                    }
                 }
             }
         }
     }
 }
 
-function foo(rowStart, rowEnd, colStart, colEnd) {
 
+//test
+function foo(rowStart, rowEnd, colStart, colEnd) {
     for (let i = rowStart; i <= rowEnd; i++) {
         for (let j = colStart; j <= colEnd; j++) {
             log(j + " : " + i)
@@ -299,8 +286,11 @@ function foo(rowStart, rowEnd, colStart, colEnd) {
     }
 }
 
+//读取模版并保存模版
 document.querySelector("#onloadAndSaveTemplate").onclick = function () {
+
     let tmp = new Array(9);
+
     for (let i = 0; i < eleList.length; i++) {
         tmp[i] = [];
         for (let j = 0; j < eleList[i].length; j++) {
@@ -308,8 +298,6 @@ document.querySelector("#onloadAndSaveTemplate").onclick = function () {
             tmp[i].push(eleList[i][j].innerText);
         }
     }
-
-    console.log(tmp);
 
     let fileId = document.querySelector("#fileId").value;
 
@@ -320,6 +308,7 @@ document.querySelector("#onloadAndSaveTemplate").onclick = function () {
     } else {
 
         templateData.data[fileId] = tmp;
+        
         saveData(templateData);
 
         alert("保存文件成功")
@@ -327,7 +316,6 @@ document.querySelector("#onloadAndSaveTemplate").onclick = function () {
     }
 
 }
-
 
 
 
@@ -350,6 +338,7 @@ if (templateData === null) {
 
 }
 
+//读取模版
 function onloadTemplate() {
 
     let fileId = document.querySelector("#fileId").value;
@@ -369,6 +358,15 @@ function onloadTemplate() {
 //读入模版
 document.querySelector("#onload").onclick = function () {
     onloadTemplate();
+}
+
+
+function readTable () {
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            numList[i][j][0] = eleList[i][j].innerText;
+        }
+    }
 }
 
 
