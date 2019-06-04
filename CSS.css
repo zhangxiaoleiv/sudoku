@@ -1,13 +1,17 @@
+
 body{
     background-color: #FFF;
 }
 
+#box{
+    margin: auto;
+    display: table;
+}
 
 #table{
     box-sizing: border-box;
     width : 550px;
     height: 550px;
-    border : 2px solid #555;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
@@ -15,8 +19,8 @@ body{
 }
 
 #table div{
-    width : 176px;
-    height: 176px;
+    width : 172px;
+    height: 172px;
     background-color: #EEE;
 }
 
@@ -24,13 +28,20 @@ body{
     float: left;
     text-align: center;
     display: block;
-    border : 1px solid #BBB;
+    border-top: 1px solid #BBB;
+    border-left: 1px solid #BBB;
     width : 56px;
     height: 56px;
     line-height: 56px;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+}
+
+#bt-list{
+    padding : 0.5em 0;
+    display: flex;
+    justify-content: space-around;
 }
 
 #fileId{

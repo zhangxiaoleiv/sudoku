@@ -1,10 +1,7 @@
 ﻿
 let originElelist = document.querySelectorAll("#table span");
 let eleList = new Array(9);
-let log = console.table;
-function logs () {
-    log(numList);
-}
+let log = console.log;
 
 function pushNumList(index, ...rest) {
     eleList[index] = [];
@@ -14,23 +11,6 @@ function pushNumList(index, ...rest) {
         originElelist[i].setAttribute("contenteditable", "true");
     })
 }
-
-let rowV32 = {
-    1 : "00,01,02+10,11,12+20,21,22",
-    2 : "03,04,05+13,14,15+23,24,25",
-    3 : "06,07,08+16,17,18+26,27,28",
-
-    4 : "30,31,32+40,41,42+50,51,52",
-    5 : "33,34,35+43,44,45+53,54,55",
-    6 : "36,37,38+46,47,48+56,56,58",
-
-    7 : "60,61,62+70,71,72+80,81,82",
-    8 : "63,64,65+73,74,75+83,84,85",
-    9 : "66,67,68+76,77,78+86,87,88"
-}
-
-
-
 
 pushNumList(0, 0,1,2,9,10,11,18,19,20);
 pushNumList(1, 3,4,5,12,13,14,21,22,23);
@@ -59,9 +39,6 @@ function comparePoint (listA, listB) {
     return n19;
 }
 
-
-
-
 function fx (n) {
     return (n.toString().split("").map(function (n) {
         return +n;
@@ -69,26 +46,21 @@ function fx (n) {
 }
 
 
-xxxxnumList = [
-    ["1", "2", "3",       "4", "5", "6",          "7", "8", ""],
-    ["2", "", "",       "", "", "",          "", "", ""],
-    ["3", "",  "",      "", "", "",          "", "", ""],
-
-    ["4", "", "",       "", "", "",          "", "", ""],
-    ["5", "", "",       "", "", "",          "", "", ""],
-    ["6", "", "",       "", "", "",          "", "", ""],
-
-    ["7", "", "",       "", "", "",          "", "", ""],
-    ["8", "", "",       "", "", "",          "", "", ""],
-    ["", "", "",       "", "", "",          "", "", ""],
-];
-
-
-
 function initCube () {
     for (let i = 0; i < 9; i++) {
+
         numList[i] = [];
+
         for (let j = 0; j < 9; j++) {
+
+            if (j === 2 || j === 5 || j === 8) {
+                eleList[i][j].style.borderRight="1px solid #BBB"
+            }
+
+            if (i === 2 || i === 5 || i === 8) {
+                eleList[i][j].style.borderBottom="1px solid #BBB"
+            }
+
             numList[i].push({
                 // 0 代表天选之子！
                 0 : "",
@@ -102,25 +74,7 @@ function initCube () {
                 7 : 0,
                 8 : 0,
                 9 : 0,
-
                 ele : eleList[i][j],
-
-                refresh : function () {
-
-                },
-
-                test : function () {
-                    
-                    let max = 0, index;
-                    for (let i = 1; i <= 9; i++) {
-                        if (this[i] !== NaN && this[i] > max) {
-                            max = this[i];
-                            index = i;
-                        }
-                    }
-                    return [index, max];
-
-                }
             })
         }
     }
@@ -128,8 +82,24 @@ function initCube () {
 
 let numList = new Array(9);
 
-//载入时初始化数据----------------
 initCube();
+
+let num3RowLIst = [];
+
+for (let i = 0; i < 9; i++) {
+    let tmp3 = [];
+    for (let j = 0; j < 9; j++) {
+        tmp3.push(numList[i][j]);
+        if (tmp3.length === 3) {
+            num3RowLIst.push(tmp3);
+            tmp3 = [];
+        }
+    }
+}
+
+
+//载入时初始化数据----------------
+
 
 function exchangeValue (obj, strNum, base) {
     let d = base / (base * strNum.length);
@@ -144,13 +114,13 @@ function onlondCube(x, y, strNum, base) {
     exchangeValue(numList[x][y], strNum, base);
 }
 
-document.querySelector("#gogogo").addEventListener("click", function() {
 
+
+function compute () {
+    
     readTable();
 
     let tmp;
-
-    //横竖
     
     for (let i = 0; i < 9; i++) {
 
@@ -163,7 +133,7 @@ document.querySelector("#gogogo").addEventListener("click", function() {
                 rowList.push(numList[i][r][0])
 
                 let t = numList[i][r][0];
-
+                //当t为一个数字的时候
                 for (let ri = 0; ri < 9; ri ++) {
                     numList[i][ri][t] = NaN;
                 }
@@ -201,44 +171,152 @@ document.querySelector("#gogogo").addEventListener("click", function() {
         }
     }
 
-    
-    //第一行
+
+    //rowCube1
     simpleNine(0, 2, 0, 2);
     simpleNine(3, 5, 0, 2);
     simpleNine(6, 8, 0, 2);
-    //第二行
+    //rowCube2
     simpleNine(0, 2, 3, 5);
     simpleNine(3, 5, 3, 5);
     simpleNine(6, 8, 3, 5);
-    //第三行
+    //rowCube3
     simpleNine(0, 2, 6, 8);
     simpleNine(3, 5, 6, 8);
     simpleNine(6, 8, 6, 8);
 
+    /*
 
 
+    
+
+    //row1
+    search3(0, 4, 5, 7, 8);
+    search3(1, 3, 5, 6, 8);
+    search3(2, 3, 4, 6, 7);
+    //row2
+    search3(3, 1, 2, 7, 8);
+    search3(4, 0, 2, 6, 8);
+    search3(5, 0, 1, 6, 7);
+    //row3
+    search3(6, 1, 2, 4, 5);
+    search3(7, 0, 2, 3, 5);
+    search3(8, 0, 1, 6, 7);
+    //row4
+    search3(9, 13, 14, 16, 17);
+    search3(10, 12, 14, 15, 17);
+    search3(11, 12, 13, 15, 16);
+    //row5
+    search3(12, 10, 11, 16, 17);
+    search3(13, 9, 11, 15, 17);
+    search3(14, 9, 10, 15, 16);
+    //row6
+    search3(15, 10, 11, 13, 14);
+    search3(16, 9, 11, 12, 14);
+    search3(17, 9, 10, 12, 13);
+    //row7
+    search3(18, 22, 23, 25, 26);
+    search3(19, 21, 23, 24, 26);
+    search3(20, 21, 22, 24, 25);
+    //row8
+    search3(21, 19, 20, 25, 26);
+    search3(22, 18, 20, 24, 26);
+    search3(23, 18, 19, 24, 25);
+    //row9
+    search3(24, 19, 20, 22, 23);
+    search3(25, 18, 20, 21, 23);
+    search3(26, 18, 19, 21, 22);
+    */
+    
+
+};
 
 
+//判断对象内打分是否唯一，如果是，返回唯一的值，如果不是，返回false
+function onlyOne(objList) {
+    let s = 0, index;
+    for (let i = 1; i <= 9; i++) {
+        if (!(isNaN(objList[i]))) {
+            s += 1;
+            index = i;
+        }
+        if (s > 1) { break }
+    }
+    return s === 1 ? index : false;
+}
 
 
+//检查结果是否合法，是true，否false
+function checkResult() {
 
-},false);
+    let indexR, indexC, rowa, cola, count = 0;
 
+    for (let i = 0; i < 9; i++) {
 
+        rowa = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-//输出结果！
-document.querySelector("#testShow").onclick = function () {
-    for (let i = 0; i < 9; i ++) {
-        for (let j = 0; j < 9; j ++) {
-            if (numList[i][j][0] === "") {
-                eleList[i][j].innerText = numList[i][j].test()[0];
-                eleList[i][j].title = numList[i][j].test()[1];
-                eleList[i][j].style.color = "blue";
+        cola = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+       
+        for (let j = 0; j < 9; j++) {
+            indexR = rowa.indexOf(numList[i][j][0]);
+            if (indexR === -1) {
+                return false;
             } else {
-                eleList[i][j].innerText = numList[i][j][0];
+                if (indexR > -1) {
+                    rowa.splice(indexR, 1, undefined);
+                }
+            }
+            indexC = cola.indexOf(numList[j][i][0]);
+            if (indexC === -1) {
+                return false;
+            } else {
+                if (indexC > -1) {
+                    cola.splice(indexC, 1, undefined);
+                }
+            }
+        }
+        if (rowa.every((n) => n === undefined) && cola.every((n) => n === undefined)) {
+            count += 1;
+        } else {
+            return false;
+        }
+    }
+    return count === 9 ? true : false;
+}
+
+
+//计算并处理结果
+document.querySelector("#testShow").onclick = function () {
+
+    let stop = 0;
+
+    readTable();
+
+    let tmp;
+
+    while (!checkResult()) {
+
+        stop += 1;
+
+        if (stop > 100) {
+            alert ("可能计算不出来结果")
+        }
+
+        compute();
+        for (let i = 0; i < 9; i ++) {
+            for (let j = 0; j < 9; j ++) {
+                tmp = onlyOne(numList[i][j])
+                if (tmp && numList[i][j][0] === "") {
+                    numList[i][j][0] = tmp + "";
+                    eleList[i][j].innerText = tmp;
+                    eleList[i][j].style.fontWeight = "bold";
+                    eleList[i][j].style.color = "blue";
+                }
             }
         }
     }
+
+    alert("计算并验证通过！");
 }
 
 
@@ -368,5 +446,112 @@ function readTable () {
         }
     }
 }
+
+
+
+//-----------------------------------------------
+
+
+
+function seekThree(val, alt, art, alb, arb) {
+
+    let lt, rt, lb, rb;
+
+    let vlt = 0, vrt = 0, vlb = 0, vrb = 0;
+
+    for (let i = 0; i < 3; i++) {
+        //左上
+        if (alt[i][0] === val) {
+            lt = true;
+        }
+        if (alt[i][0] === "") {
+            vlt += 1;
+        }
+        //右上
+        if (art[i][0] === val) {
+            rt = true;
+        }
+        if (art[i][0] === "") {
+            vrt += 1;
+        }
+        //左下
+        if (alb[i][0] === val) {
+            lb = true;
+        }
+        if (alb[i][0] === "") {
+            vlb += 1;
+        }
+        //右下
+        if (arb[i][0] === val) {
+            rb = true;
+        }
+        if (alt[i][0] === "") {
+            vrb += 1;
+        }
+    }
+
+    //log(lt + ":" + rt + "|" + lb + ":" + rb);
+
+    if (!(lt || rt || lb || rb)) {
+        search3_s(val, alt, vlt);
+        search3_s(val, art, vrt);
+        search3_s(val, alb, vlb);
+        search3_s(val, arb, vrb);
+    }
+
+    //左上对右下
+    if (lt === true && rb !== true) {
+        for (let i = 0; i < 3; i++) {
+            if (arb[i][0] === "") {
+               arb[i][val] = 3 / (3 * vrb);
+            }
+        }
+    }
+    //右上对左下
+    if (rt === true && lb !== true) {
+        for (let i = 0; i < 3; i++) {
+            if (alb[i][0] === "") {
+               alb[i][val] = 3 / (3 * vlb);
+            }
+        }
+    }
+    //左下对右上
+    if (lb === true && rt !== true) {
+        for (let i = 0; i < 3; i++) {
+            if (art[i][0] === "") {
+               art[i][val] = 3 / (3 * vrt);
+            }
+        }
+    }
+    //右下对左上
+    if (rb === true && lt !== true) {
+
+        for (let i = 0; i < 3; i++) {
+            if (alt[i][0] === "") {
+               alt[i][val] = 3 / (3 * vlt);
+            }
+        }
+    }
+}
+
+
+function search3_s (val, arr, empty) {
+    arr.forEach(function (obj) {
+        if (obj[0] === "") {
+            obj[val] += 12 / (3 * empty);
+        }
+    })
+}
+
+
+function search3 (arrId, ilt, irt, ilb, irb) {
+    num3RowLIst[arrId].forEach(function (obj) {
+        if (obj[0] !== "") {
+            seekThree(obj[0], num3RowLIst[ilt], num3RowLIst[irt], num3RowLIst[ilb], num3RowLIst[irb])
+        }      
+    })
+}
+
+
 
 
