@@ -114,12 +114,16 @@ function onlondCube(x, y, strNum, base) {
     exchangeValue(numList[x][y], strNum, base);
 }
 
-
-
-function compute () {
-    
+function compute() {
     readTable();
+   computeRowCol();
+   computeNine();
+   computeThree();
+}
 
+
+function computeRowCol () {
+    
     let tmp;
     
     for (let i = 0; i < 9; i++) {
@@ -170,26 +174,25 @@ function compute () {
             }
         }
     }
+};
 
+function computeNine () {
+     //rowCube1
+     simpleNine(0, 2, 0, 2);
+     simpleNine(3, 5, 0, 2);
+     simpleNine(6, 8, 0, 2);
+     //rowCube2
+     simpleNine(0, 2, 3, 5);
+     simpleNine(3, 5, 3, 5);
+     simpleNine(6, 8, 3, 5);
+     //rowCube3
+     simpleNine(0, 2, 6, 8);
+     simpleNine(3, 5, 6, 8);
+     simpleNine(6, 8, 6, 8);
+ 
+}
 
-    //rowCube1
-    simpleNine(0, 2, 0, 2);
-    simpleNine(3, 5, 0, 2);
-    simpleNine(6, 8, 0, 2);
-    //rowCube2
-    simpleNine(0, 2, 3, 5);
-    simpleNine(3, 5, 3, 5);
-    simpleNine(6, 8, 3, 5);
-    //rowCube3
-    simpleNine(0, 2, 6, 8);
-    simpleNine(3, 5, 6, 8);
-    simpleNine(6, 8, 6, 8);
-
-    /*
-
-
-    
-
+function computeThree () {
     //row1
     search3(0, 4, 5, 7, 8);
     search3(1, 3, 5, 6, 8);
@@ -201,7 +204,7 @@ function compute () {
     //row3
     search3(6, 1, 2, 4, 5);
     search3(7, 0, 2, 3, 5);
-    search3(8, 0, 1, 6, 7);
+    search3(8, 0, 1, 3, 4);
     //row4
     search3(9, 13, 14, 16, 17);
     search3(10, 12, 14, 15, 17);
@@ -226,10 +229,8 @@ function compute () {
     search3(24, 19, 20, 22, 23);
     search3(25, 18, 20, 21, 23);
     search3(26, 18, 19, 21, 22);
-    */
     
-
-};
+}
 
 
 //判断对象内打分是否唯一，如果是，返回唯一的值，如果不是，返回false
@@ -298,11 +299,13 @@ document.querySelector("#testShow").onclick = function () {
 
         stop += 1;
 
-        if (stop > 100) {
-            alert ("可能计算不出来结果")
+        if (stop > 200) {
+            alert ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+            return;
         }
 
         compute();
+
         for (let i = 0; i < 9; i ++) {
             for (let j = 0; j < 9; j ++) {
                 tmp = onlyOne(numList[i][j])
@@ -315,6 +318,9 @@ document.querySelector("#testShow").onclick = function () {
             }
         }
     }
+
+  
+
 
     alert("计算并验证通过！");
 }
@@ -451,11 +457,18 @@ function readTable () {
 
 //-----------------------------------------------
 
+function tmpFunc (val, arr) {
+    for (let i = 1; i <=9; i++) {
+        if (i != val) {
+            arr[i] = NaN;
+        }
+    }
+}
 
 
 function seekThree(val, alt, art, alb, arb) {
 
-    let lt, rt, lb, rb;
+    let lt = false, rt = false, lb = false, rb = false;
 
     let vlt = 0, vrt = 0, vlb = 0, vrb = 0;
 
@@ -463,82 +476,92 @@ function seekThree(val, alt, art, alb, arb) {
         //左上
         if (alt[i][0] === val) {
             lt = true;
-        }
-        if (alt[i][0] === "") {
+        } else if (alt[i][0] === "") {
             vlt += 1;
         }
         //右上
         if (art[i][0] === val) {
             rt = true;
-        }
-        if (art[i][0] === "") {
+        } else if (art[i][0] === "") {
             vrt += 1;
         }
         //左下
         if (alb[i][0] === val) {
             lb = true;
-        }
-        if (alb[i][0] === "") {
+        } else if (alb[i][0] === "") {
             vlb += 1;
         }
         //右下
         if (arb[i][0] === val) {
             rb = true;
-        }
-        if (alt[i][0] === "") {
+        } else if (arb[i][0] === "") {
             vrb += 1;
         }
     }
 
-    //log(lt + ":" + rt + "|" + lb + ":" + rb);
+    //log(vlt + ":" + vrt + ":" + vlb + ":" + vrb);
 
-    if (!(lt || rt || lb || rb)) {
+    if (lt || rt || lb || rb) {
+        
+        //左上对右下
+        if (lt === true && rb === false) {
+            for (let i = 0; i < 3; i++) {
+                if (arb[i][0] === "" && vrb === 1) {
+                   // arb[i][0] = val;
+                    tmpFunc(val, arb[i]);
+                } else if (arb[i][0] === "") {
+                arb[i][val] += 3 / (3 * vrb);
+                }
+            }
+        }
+        //右上对左下
+        if (rt === true && lb === false) {
+            for (let i = 0; i < 3; i++) {
+                if (alb[i][0] === "" && vlb === 1) {
+                    //alb[i][0] = val;
+                   tmpFunc(val, alb[i]);
+                } else if (alb[i][0] === "") {
+                alb[i][val] += 3 / (3 * vlb);
+                }
+            }
+        }
+        //左下对右上
+        if (lb === true && rt === false) {
+            for (let i = 0; i < 3; i++) {
+                if (art[i][0] === "" && vrt === 1) {
+                   // art[i][0] = val;
+                   tmpFunc(val, art[i]);
+                } else if (art[i][0] === "") {
+                art[i][val] += 3 / (3 * vrt);
+                }
+            }
+        }
+        //右下对左上
+        if (rb === true && lt === false) {
+            for (let i = 0; i < 3; i++) {
+                if (alt[i][0] === "" && vlt === 1) {
+                    //alt[i][0] = val;
+                   tmpFunc(val, alt[i]);
+                } else if (alt[i][0] === "") {
+                alt[i][val] += 3 / (3 * vlt);
+                }
+            }
+        }
+
+    } else {
         search3_s(val, alt, vlt);
         search3_s(val, art, vrt);
         search3_s(val, alb, vlb);
         search3_s(val, arb, vrb);
     }
 
-    //左上对右下
-    if (lt === true && rb !== true) {
-        for (let i = 0; i < 3; i++) {
-            if (arb[i][0] === "") {
-               arb[i][val] = 3 / (3 * vrb);
-            }
-        }
-    }
-    //右上对左下
-    if (rt === true && lb !== true) {
-        for (let i = 0; i < 3; i++) {
-            if (alb[i][0] === "") {
-               alb[i][val] = 3 / (3 * vlb);
-            }
-        }
-    }
-    //左下对右上
-    if (lb === true && rt !== true) {
-        for (let i = 0; i < 3; i++) {
-            if (art[i][0] === "") {
-               art[i][val] = 3 / (3 * vrt);
-            }
-        }
-    }
-    //右下对左上
-    if (rb === true && lt !== true) {
-
-        for (let i = 0; i < 3; i++) {
-            if (alt[i][0] === "") {
-               alt[i][val] = 3 / (3 * vlt);
-            }
-        }
-    }
 }
 
 
 function search3_s (val, arr, empty) {
     arr.forEach(function (obj) {
         if (obj[0] === "") {
-            obj[val] += 12 / (3 * empty);
+            obj[val] += 3 / (3 * empty);
         }
     })
 }
@@ -550,6 +573,22 @@ function search3 (arrId, ilt, irt, ilb, irb) {
             seekThree(obj[0], num3RowLIst[ilt], num3RowLIst[irt], num3RowLIst[ilb], num3RowLIst[irb])
         }      
     })
+}
+
+document.querySelector("#gogogo").onclick = function () {
+    compute();
+    for (let i = 0; i < 9; i ++) {
+        for (let j = 0; j < 9; j ++) {
+            tmp = onlyOne(numList[i][j])
+            if (tmp && numList[i][j][0] === "") {
+                numList[i][j][0] = tmp + "";
+                eleList[i][j].innerText = tmp;
+                eleList[i][j].style.fontWeight = "bold";
+                eleList[i][j].style.color = "blue";
+            }
+        }
+    }
+    console.log("调试运行")
 }
 
 
