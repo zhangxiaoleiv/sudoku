@@ -85,14 +85,19 @@ let numList = new Array(9);
 initCube();
 
 let num3RowLIst = [];
+let num3ColList = [];
 
 for (let i = 0; i < 9; i++) {
+    let tmpc3 = [];
     let tmp3 = [];
     for (let j = 0; j < 9; j++) {
+        tmpc3.push(numList[j][i]);
         tmp3.push(numList[i][j]);
         if (tmp3.length === 3) {
             num3RowLIst.push(tmp3);
+            num3ColList.push(tmpc3);
             tmp3 = [];
+            tmpc3 = [];
         }
     }
 }
@@ -116,11 +121,11 @@ function onlondCube(x, y, strNum, base) {
 
 function compute() {
     readTable();
-   computeRowCol();
-   computeNine();
-   computeThree();
+    computeRowCol();
+    computeNine();
+    computeThree();
+    computeColThree();
 }
-
 
 function computeRowCol () {
     
@@ -232,6 +237,45 @@ function computeThree () {
     
 }
 
+function computeColThree () {
+    //col1
+    search3c(0, 4, 7, 5, 8);
+    search3c(1, 3, 6, 5, 8);
+    search3c(2, 3, 6, 4, 7);
+    //col2
+    search3c(3, 1, 7 , 2, 8);
+    search3c(4, 0, 6, 2, 8);
+    search3c(5, 0, 6, 1, 7);
+    //col3
+    search3c(6, 1, 4, 2, 5);
+    search3c(7, 0, 3, 2, 5);
+    search3c(8, 0, 3, 1, 4);
+    //col4
+    search3c(9, 13, 16, 14, 17);
+    search3c(10, 12, 15, 14, 17);
+    search3c(11, 12, 15, 13, 16);
+    //col5
+    search3c(12, 10, 16, 11, 17);
+    search3c(13, 9, 15, 11, 17);
+    search3c(14, 9, 15, 10, 16);
+    //col6
+    search3c(15, 10, 13, 11, 14);
+    search3c(16, 9, 12, 11, 14);
+    search3c(17, 9, 12, 10, 13);
+    //col7
+    search3c(18, 22, 25, 23, 26);
+    search3c(19, 21, 24, 23, 26);
+    search3c(20, 21, 24, 22, 25);
+    //col8
+    search3c(21, 19, 25, 20, 26);
+    search3c(22, 18, 24, 20, 26);
+    search3c(23, 18, 24, 19, 25);
+    //col9
+    search3c(24, 19, 22, 20, 23);
+    search3c(25, 18, 21, 20, 23);
+    search3c(26, 18, 21, 19,22);
+}
+
 
 //判断对象内打分是否唯一，如果是，返回唯一的值，如果不是，返回false
 function onlyOne(objList) {
@@ -299,7 +343,7 @@ document.querySelector("#testShow").onclick = function () {
 
         stop += 1;
 
-        if (stop > 200) {
+        if (stop > 500) {
             alert ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             return;
         }
@@ -574,6 +618,16 @@ function search3 (arrId, ilt, irt, ilb, irb) {
         }      
     })
 }
+
+function search3c (arrId, ilt, irt, ilb, irb) {
+    num3ColList[arrId].forEach(function (obj) {
+        if (obj[0] !== "") {
+            seekThree(obj[0], num3ColList[ilt], num3ColList[irt], num3ColList[ilb], num3ColList[irb])
+        }      
+    })
+}
+
+
 
 document.querySelector("#gogogo").onclick = function () {
     compute();
