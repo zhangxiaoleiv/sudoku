@@ -370,16 +370,26 @@ document.querySelector("#testShow").onclick = function () {
 }
 
 
+let list9 = [];
+//通过这个函数获取一个9宫格的列表，为isOk函数用。。。这很傻逼，我知道。
+
 function simpleNine (rowStart, rowEnd, colStart, colEnd) {
 
     let nineList = [];
+    let L9 = [];
 
     for (let i = rowStart; i <= rowEnd; i++) {
         for (let j = colStart; j <= colEnd; j++) {
             if (numList[j][i][0] !== "") {
                 nineList.push(numList[j][i][0])
             }
+            //么么哒
+            list9.length !== 9 && L9.push([i, j]);
         }
+    }
+
+    if (list9.length !== 9) {
+        list9.push(L9);
     }
 
     let tmp = nineList.length ? comparePoint(nineList).join("") : false;
@@ -647,5 +657,61 @@ document.querySelector("#gogogo").onclick = function () {
 }
 
 
+function guess(not) {
+    if (checkResult()) {
+        alert("我的天啊，我简直不敢相信自己的眼镜！")
+    } else if (!isOk()) {
+        not.push(max);
+    } else {
+        let max = getMax();
+        setItem(max);
+        compute();
+        guess();
+    }
+}
 
+function setItem(o) {
+    numList[o[0]][o[1]][0] = o[2];
+}
 
+function getMax(not) {
+    let tmp = new Array(3);
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            for (k = 1; k <= 8; k++) {
+                if (numList[i][j][k] > tmp[2]) {
+                    tmp[0] = i;
+                    tmp[1] = j;
+                    tmp[2] = numList[i][j][k];
+                }
+            }
+        }
+    }
+    return tmp;
+}
+
+function isOk() {
+    let rowCount, colCount, nineCount;
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            if (numList[i][j][0] !== "" && numList[i][j][0] === rowCount) {
+                return false;
+            } else {
+                rowCount = numList[i][j][0];
+            }
+            if (numList[j][i][0] !== "" && numList[j][i][0] === colCount) {
+                return false;
+            } else {
+                colCount = numList[j][i][0];
+            }
+        }
+    }
+    for (let item of list9) {
+        if (item !== "" && item === nineCount) {
+            return false;
+        } else {
+            nineCount = item;
+        }
+    }
+    return true;
+}
