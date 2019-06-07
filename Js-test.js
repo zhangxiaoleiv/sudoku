@@ -1,13 +1,17 @@
 ﻿
+/*
+Author : Zhang xiaolei (张晓雷)
+Released under the MIT License.
+Email : zhangxiaolei@outlook.com
+*/
+
+let log = console.log;
 let originElelist = document.querySelectorAll("#table span");
 let eleList = new Array(9);
-let log = console.log;
-
 function pushNumList(index, ...rest) {
     eleList[index] = [];
     rest.forEach(function (i) {
         eleList[index].push(originElelist[i])
-        //表格可编辑
         originElelist[i].setAttribute("contenteditable", "true");
     })
 }
@@ -27,7 +31,7 @@ let n19 = ["1","2","3","4","5","6","7","8","9"];
 function createNine () {
     return ["1","2","3","4","5","6","7","8","9"];
 }
-
+//返回一个或者两个数组内数据1~9以外的数据
 function comparePoint (listA, listB) {
     let n19 = createNine();
     let listAB = listB ? listA.concat(listB) : listA;
@@ -38,14 +42,13 @@ function comparePoint (listA, listB) {
     }
     return n19;
 }
-
+//将字符转变为数组，数组数据类型为整数
 function fx (n) {
     return (n.toString().split("").map(function (n) {
         return +n;
     }));
 }
-
-
+//产生每个单元的核心对象
 function initCube () {
     for (let i = 0; i < 9; i++) {
 
@@ -81,9 +84,9 @@ function initCube () {
 }
 
 let numList = new Array(9);
-
+//运行初始化
 initCube();
-
+//3X3交叉排除遍历坐标数组
 let num3RowLIst = [];
 let num3ColList = [];
 
@@ -103,9 +106,7 @@ for (let i = 0; i < 9; i++) {
 }
 
 
-//载入时初始化数据----------------
-
-
+//载入时初始化数据
 function exchangeValue (obj, strNum, base) {
     let d = base / (base * strNum.length);
     for (let i of strNum) {
@@ -113,12 +114,11 @@ function exchangeValue (obj, strNum, base) {
     }
 }
 
-
 function onlondCube(x, y, strNum, base) {
 
     exchangeValue(numList[x][y], strNum, base);
 }
-
+//程序的主要计算模块
 function compute() {
     readTable();
     computeRowCol();
@@ -643,6 +643,7 @@ document.querySelector("#gogogo").onclick = function () {
         }
     }
     console.log("调试运行")
+    log(numList);
 }
 
 
