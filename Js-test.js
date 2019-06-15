@@ -43,11 +43,8 @@ function comparePoint (listA, listB) {
     return n19;
 }
 //将字符转变为数组，数组数据类型为整数
-function fx (n) {
-    return (n.toString().split("").map(function (n) {
-        return +n;
-    }));
-}
+
+
 //产生每个单元的核心对象
 function initCube () {
     for (let i = 0; i < 9; i++) {
@@ -66,7 +63,7 @@ function initCube () {
 
             numList[i].push({
                 // 0 代表天选之子！
-                0 : "",
+                0 : 0,
                 // 候选列表
                 1 : 0,
                 2 : 0,
@@ -121,22 +118,27 @@ function onlondCube(x, y, strNum, base) {
 //程序的主要计算模块
 function compute() {
     let tmp, move = [];
-    readTable();
+    setZero();
     computeRowCol();
     computeNine();
     computeThree();
     computeColThree();
+
     for (let i = 0; i < 9; i ++) {
         for (let j = 0; j < 9; j ++) {
 
             tmp = onlyOne(numList[i][j]);
 
-            if (tmp && numList[i][j][0] === "") {
+            if (tmp && numList[i][j][0] === 0) {
                 move.push([i, j]);
                 numList[i][j][0] = tmp;
-                eleList[i][j].innerText = tmp;
+
+
+                eleList[i][j].innerText = numList[i][j][0];
                 eleList[i][j].style.fontWeight = "bold";
                 eleList[i][j].style.color = "blue";
+
+
             } 
         }
     }
@@ -149,7 +151,7 @@ function computeRowCol (move) {
     for (let i = 0; i < 9; i++) {
         let rowList = [];
         for (let r = 0; r < 9; r ++) {
-            if (numList[i][r][0] !== "") {
+            if (numList[i][r][0] !== 0) {
                 rowList.push(numList[i][r][0])
                 let t = numList[i][r][0];
                 allExclude(i,r);
@@ -165,11 +167,11 @@ function computeRowCol (move) {
 
             let colList = [];
             //横向发现为空
-            if (numList[i][c][0] === "") {
+            if (numList[i][c][0] === 0) {
 
                 for (let j = 0; j < 9; j++) {
                     //立即开始纵向遍历
-                    if (numList[j][c][0] !== "") {
+                    if (numList[j][c][0] !== 0) {
                         //保存不为0的坐标
                         colList.push(numList[j][c][0]);
                         //同时将 t 的候选项全部排出
@@ -312,9 +314,9 @@ function checkResult() {
 
     for (let i = 0; i < 9; i++) {
 
-        rowa = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        rowa = [1,2,3,4,5,6,7,8,9];
 
-        cola = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        cola = [1,2,3,4,5,6,7,8,9];
        
         for (let j = 0; j < 9; j++) {
             indexR = rowa.indexOf(numList[i][j][0]);
@@ -344,7 +346,7 @@ function checkResult() {
 }
 
 
-//计算并处理结果
+//简单的计算功能
 document.querySelector("#testShow").onclick = function () {
 
     let stop = 0;
@@ -357,7 +359,7 @@ document.querySelector("#testShow").onclick = function () {
 
         stop += 1;
 
-        if (stop > 500) {
+        if (stop > 100) {
             alert ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             return;
         }
@@ -367,8 +369,8 @@ document.querySelector("#testShow").onclick = function () {
         for (let i = 0; i < 9; i ++) {
             for (let j = 0; j < 9; j ++) {
                 tmp = onlyOne(numList[i][j])
-                if (tmp && numList[i][j][0] === "") {
-                    numList[i][j][0] = tmp + "";
+                if (tmp && numList[i][j][0] === 0) {
+                    numList[i][j][0] = tmp;
                     eleList[i][j].innerText = tmp;
                     eleList[i][j].style.fontWeight = "bold";
                     eleList[i][j].style.color = "blue";
@@ -376,9 +378,6 @@ document.querySelector("#testShow").onclick = function () {
             }
         }
     }
-
-  
-
 
     alert("计算并验证通过！");
 }
@@ -394,7 +393,7 @@ function simpleNine (rowStart, rowEnd, colStart, colEnd) {
 
     for (let i = rowStart; i <= rowEnd; i++) {
         for (let j = colStart; j <= colEnd; j++) {
-            if (numList[j][i][0] !== "") {
+            if (numList[j][i][0] !== 0) {
                 nineList.push(numList[j][i][0])
             }
             //么么哒
@@ -412,7 +411,7 @@ function simpleNine (rowStart, rowEnd, colStart, colEnd) {
 
         for (let i = rowStart; i <= rowEnd; i++) {
             for (let j = colStart; j <= colEnd; j++) {
-                if (numList[j][i][0] === "") {
+                if (numList[j][i][0] === 0) {
                     onlondCube(j, i, tmp, 9);
                 } else {
                     //有数字
@@ -445,7 +444,7 @@ document.querySelector("#onloadAndSaveTemplate").onclick = function () {
     for (let i = 0; i < eleList.length; i++) {
         tmp[i] = [];
         for (let j = 0; j < eleList[i].length; j++) {
-            numList[i][j][0] = eleList[i][j].innerText;
+            numList[i][j][0] = +(eleList[i][j].innerText);
             tmp[i].push(eleList[i][j].innerText);
         }
     }
@@ -487,6 +486,8 @@ function onloadTemplate() {
             }
         }
     }
+
+    readTable();
 }
 
 //读入模版
@@ -497,7 +498,7 @@ document.querySelector("#onload").onclick = function () {
 function readTable () {
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-            numList[i][j][0] = eleList[i][j].innerText;
+            numList[i][j][0] = +(eleList[i][j].innerText);
         }
     }
 }
@@ -522,25 +523,25 @@ function seekThree(val, alt, art, alb, arb) {
         //左上
         if (alt[i][0] === val) {
             lt = true;
-        } else if (alt[i][0] === "") {
+        } else if (alt[i][0] === 0) {
             vlt += 1;
         }
         //右上
         if (art[i][0] === val) {
             rt = true;
-        } else if (art[i][0] === "") {
+        } else if (art[i][0] === 0) {
             vrt += 1;
         }
         //左下
         if (alb[i][0] === val) {
             lb = true;
-        } else if (alb[i][0] === "") {
+        } else if (alb[i][0] === 0) {
             vlb += 1;
         }
         //右下
         if (arb[i][0] === val) {
             rb = true;
-        } else if (arb[i][0] === "") {
+        } else if (arb[i][0] === 0) {
             vrb += 1;
         }
     }
@@ -550,21 +551,19 @@ function seekThree(val, alt, art, alb, arb) {
         //左上对右下
         if (lt === true && rb === false) {
             for (let i = 0; i < 3; i++) {
-                if (arb[i][0] === "" && vrb === 1) {
-                   // arb[i][0] = val;
+                if (arb[i][0] === 0 && vrb === 1) {
                     tmpFunc(val, arb[i]);
-                } else if (arb[i][0] === "") {
-                arb[i][val] += 3 / (3 * vrb);
+                } else if (arb[i][0] === 0) {
+                    arb[i][val] += 3 / (3 * vrb);
                 }
             }
         }
         //右上对左下
         if (rt === true && lb === false) {
             for (let i = 0; i < 3; i++) {
-                if (alb[i][0] === "" && vlb === 1) {
-                    //alb[i][0] = val;
+                if (alb[i][0] === 0 && vlb === 1) {
                     tmpFunc(val, alb[i]);
-                } else if (alb[i][0] === "") {
+                } else if (alb[i][0] === 0) {
                     alb[i][val] += 3 / (3 * vlb);
                 }
             }
@@ -572,22 +571,20 @@ function seekThree(val, alt, art, alb, arb) {
         //左下对右上
         if (lb === true && rt === false) {
             for (let i = 0; i < 3; i++) {
-                if (art[i][0] === "" && vrt === 1) {
-                   // art[i][0] = val;
-                   tmpFunc(val, art[i]);
-                } else if (art[i][0] === "") {
-                art[i][val] += 3 / (3 * vrt);
+                if (art[i][0] === 0 && vrt === 1) {
+                    tmpFunc(val, art[i]);
+                } else if (art[i][0] === 0) {
+                    art[i][val] += 3 / (3 * vrt);
                 }
             }
         }
         //右下对左上
         if (rb === true && lt === false) {
             for (let i = 0; i < 3; i++) {
-                if (alt[i][0] === "" && vlt === 1) {
-                    //alt[i][0] = val;
-                   tmpFunc(val, alt[i]);
-                } else if (alt[i][0] === "") {
-                alt[i][val] += 3 / (3 * vlt);
+                if (alt[i][0] === 0 && vlt === 1) {
+                    tmpFunc(val, alt[i]);
+                } else if (alt[i][0] === 0) {
+                    alt[i][val] += 3 / (3 * vlt);
                 }
             }
         }
@@ -603,15 +600,15 @@ function seekThree(val, alt, art, alb, arb) {
 //交叉对比，全部为false
 function search3_s (val, arr, empty) {
     arr.forEach(function (obj) {
-        if (obj[0] === "") {
-            obj[val] += 3 / (3 * empty);
+        if (obj[0] === 0) {
+            obj[val] += 6 / (6 * empty);
         }
     })
 }
 //横向交叉入口
 function search3 (arrId, ilt, irt, ilb, irb) {
     num3RowLIst[arrId].forEach(function (obj) {
-        if (obj[0] !== "") {
+        if (obj[0] !== 0) {
             seekThree(obj[0], num3RowLIst[ilt], num3RowLIst[irt], num3RowLIst[ilb], num3RowLIst[irb])
         }      
     })
@@ -619,7 +616,7 @@ function search3 (arrId, ilt, irt, ilb, irb) {
 //总线交叉入口
 function search3c (arrId, ilt, irt, ilb, irb) {
     num3ColList[arrId].forEach(function (obj) {
-        if (obj[0] !== "") {
+        if (obj[0] !== 0) {
             seekThree(obj[0], num3ColList[ilt], num3ColList[irt], num3ColList[ilb], num3ColList[irb])
         }      
     })
@@ -652,47 +649,59 @@ document.querySelector("#gogogo").onclick = function () {
 
 //testGuess1();
 testGuess2();
+//readTable();
+//log(isOk());
 
 }
 
-
+/*
 function testGuess1() {
      compute();
      getMax5();
      setItem();
 }
+*/
 
 function testGuess2() {
 
+    let ttt = 0;
+
+    //readTable();
+
     while (!checkResult()) {
 
-        setZero();
+        if (!compute().length) {
 
-        let move = compute();
+            if (haveEmpty()) {
 
-        if (!move.length) {
+                getMax();
 
-            getMax5();
+            }
 
             setItem();
 
-            if (isOk() && haveEmpty()) {
-                log("---continue---")
-                continue;
-
-            } else {
-                log("--GoBack---")
-                goBack();
-
+            checkEnd();
+        }
+    } 
+        alert("===成功===");
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                eleList[i][j].innerText = numList[i][j][0];
+                eleList[i][j].style.fontWeight = "bold";
+                eleList[i][j].style.color = "blue";
             }
         }
-    }
+}
+
+function goBack() {
+    console.log("goBakc函数")
+    deleteLine();
 }
 
 function haveEmpty() {
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-            if (numList[i][j][0] === "") {
+            if (numList[i][j][0] === 0) {
                 return true;
             }
         }
@@ -700,49 +709,41 @@ function haveEmpty() {
     return false;
 }
 
+function checkEnd() {
+    if (maxList[0][0].length === 0) {
+        if(checkResult()) {
+            alert("计算成功了！！！！")
+        } else {
+            alert("XXXXXXXX可能计算失败！XXXXXXXXXXXXX")
+        }
+    }
+}
+
 function setItem() {
 
-    log(maxList);
-
-    if (maxList[0][0].length === 0) {
-        if(checkResult()) {
-            alert("计算成功了！！！！")
-        } else {
-            alert("XXXXXXXX可能计算失败！XXXXXXXXXXXXX")
-        }
-    }
-
-    if (maxList[maxList.length - 1][0].length === 0) {
-        maxList.pop();
-    }
-
-    numList = clone(maxList[maxList.length - 1][1])
+    deleteLine();    
     let one = maxList[maxList.length - 1][0].shift();
+    deleteLine();
+    numList[one[0]][one[1]][0] = one[2];
 
-    numList[one[0]][one[1]][0] = one[2] + "";
-    eleList[one[0]][one[1]].innerText = one[2];
-    eleList[one[0]][one[1]].style.color = "red";
+
+    //eleList[one[0]][one[1]].innerText = one[2];
+    //eleList[one[0]][one[1]].style.color = "red";
 
 }
 
-function goBack() {
 
-    if (maxList[0][0].length === 0) {
-        if(checkResult()) {
-            alert("计算成功了！！！！")
-        } else {
-            alert("XXXXXXXX可能计算失败！XXXXXXXXXXXXX")
-        }
-    }
+function deleteLine() {
 
     if (maxList[maxList.length - 1][0].length === 0) {
-        maxList.pop();
+        maxList.pop()
+        //numList = clone(maxList[maxList.length - 1][1]);
+    } else {
         numList = clone(maxList[maxList.length - 1][1]);
-    } 
-
-    numList = clone(maxList[maxList.length - 1][1]);
-    
+    }
 }
+
+
 
 
 function getOneMin (arr) {
@@ -755,7 +756,7 @@ function getOneMin (arr) {
     
     for (let i = 1; i < arr.length; i++) {
 
-        if (tmp[3] > arr[i][3]) {
+        if (tmp[3] < arr[i][3]) {
 
             tmp[0] = arr[i][0];
             tmp[1] = arr[i][1];
@@ -780,16 +781,12 @@ function getOneMax(arr) {
         }
     }
     //      序列  数值
-    if (index) {
-        return [index, t];
-    } else {
-        return false;
-    }
-    
+
+    return index ? [index, t] : false;
 }
 
 //求最大的五个值。。。
-function getMax5() {
+function getMax() {
 
     let t, obj = Object.create(null);
 
@@ -803,9 +800,9 @@ function getMax5() {
 
             t = getOneMax(numList[i][j]);
 
-            if (tmp.length < 5) {
+            if (tmp.length < 4) {
 
-                if (t) {
+                if (t.length) {
                     tmp.push([i, j, t[0], t[1]]);
                 }
 
@@ -820,48 +817,62 @@ function getMax5() {
         }
     }
 
-    //由大到小排序，未完成！
-    tmp.sort(function (a, b) {
-        return  b[3] - a[3];
-    })
+    tmp.sort((a, b) => b[3] - a[3])
 
-    obj[0] = tmp;
-    obj[1] = clone(numList); 
-
-    maxList.push([obj[0], obj[1]])
+    if (tmp.length) {
+        obj[0] = tmp;
+        obj[1] = clone(numList);
+        maxList.push([obj[0], obj[1]])
+    } //else {
+        //console.log("getMax5函数...else...")
+   // }
 }
 
 
 function isOk() {
     let rowCount, colCount, nineCount;
+    let rc, cr;
     for (let i = 0; i < 9; i++) {
+        rowCount = undefined;
+        colCount = undefined;
         for (let j = 0; j < 9; j++) {
-            if (numList[i][j][0] !== "" && numList[i][j][0] === rowCount) {
+
+            rc = numList[i][j][0];
+            cr = numList[j][i][0];
+
+            if (rc !== 0 && rc === rowCount) {
                 return false;
-            } else {
-                rowCount = numList[i][j][0];
+            } else if ( rc !== 0 ) {
+                rowCount = rc;
             }
-            if (numList[j][i][0] !== "" && numList[j][i][0] === colCount) {
+            if (cr !== 0 && cr === colCount) {
                 return false;
-            } else {
-                colCount = numList[j][i][0];
+            } else if ( cr !== 0 ) {
+                colCount = cr;
             }
         }
     }
-    for (let item of list9) {
-        if (item !== "" && item === nineCount) {
-            return false;
-        } else {
-            nineCount = item;
-        }
+
+    let t9;
+
+    for (let l9 of list9) {
+        nineCount = undefined;
+        for (let i of l9) {
+            t9 = numList[i[0]][i[1]][0];
+            if (t9 !== 0 && t9 === nineCount) {
+                return false;
+            } else if ( t9 !== 0) {
+                nineCount = t9;
+            }
+        }  
     }
     return true;
 }
 
 function setZero() {
-    for (let i = 0; i < 9; i ++) {
-        for (let j = 0; j < 9; j ++) {
-            for (let k = 1; k <= 9; k++ ) {
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            for (let k = 1; k <= 9; k++) {
                 numList[i][j][k] = 0;
             }
         }

@@ -42,3 +42,16 @@ for (let i = 0; i < 9; i ++) {
 console.log("调试运行")
 log(numList);
 */
+
+
+
+
+    /*
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            eleList[i][j].innerText = numList[i][j][0];
+            eleList[i][j].style.fontWeight = "bold";
+            eleList[i][j].style.color = "blue";
+        }
+    }
+    */
