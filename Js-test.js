@@ -1,10 +1,4 @@
 ﻿
-/*
-Author : Zhang xiaolei (张晓雷)
-Released under the MIT License.
-Email : zhangxiaolei@outlook.com
-*/
-
 let log = console.log;
 let originElelist = document.querySelectorAll("#table span");
 let eleList = new Array(9);
@@ -132,13 +126,6 @@ function compute() {
             if (tmp && numList[i][j][0] === 0) {
                 move.push([i, j]);
                 numList[i][j][0] = tmp;
-
-
-                eleList[i][j].innerText = numList[i][j][0];
-                eleList[i][j].style.fontWeight = "bold";
-                eleList[i][j].style.color = "blue";
-
-
             } 
         }
     }
@@ -343,43 +330,6 @@ function checkResult() {
         }
     }
     return count === 9 ? true : false;
-}
-
-
-//简单的计算功能
-document.querySelector("#testShow").onclick = function () {
-
-    let stop = 0;
-
-    readTable();
-
-    let tmp;
-
-    while (!checkResult()) {
-
-        stop += 1;
-
-        if (stop > 100) {
-            alert ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-            return;
-        }
-
-        compute();
-
-        for (let i = 0; i < 9; i ++) {
-            for (let j = 0; j < 9; j ++) {
-                tmp = onlyOne(numList[i][j])
-                if (tmp && numList[i][j][0] === 0) {
-                    numList[i][j][0] = tmp;
-                    eleList[i][j].innerText = tmp;
-                    eleList[i][j].style.fontWeight = "bold";
-                    eleList[i][j].style.color = "blue";
-                }
-            }
-        }
-    }
-
-    alert("计算并验证通过！");
 }
 
 
@@ -623,79 +573,29 @@ function search3c (arrId, ilt, irt, ilb, irb) {
 }
 
 
-/************************************************************
-
-maxList = [
-
-*obj[0]*****ojb[1]*
-{ [x x x x x] | num },
-{ [x x x x x] | num },
-{ [x x x x x] | num },
-{ [x x x x x] | num },
-{ [x x x x x] | num },
-{ [x x x x x] | num }
-
-]
-     坐标   坐标  数值   评分
- x = [x,    y,    0,    0];
-
-
-*************************************************************/
-
 let maxList = [];
 
 
-document.querySelector("#gogogo").onclick = function () {
-
-//testGuess1();
-testGuess2();
-//readTable();
-//log(isOk());
-
-}
-
-/*
-function testGuess1() {
-     compute();
-     getMax5();
-     setItem();
-}
-*/
+document.querySelector("#gogogo").onclick = testGuess2;
 
 function testGuess2() {
 
-    let ttt = 0;
-
-    //readTable();
+    readTable();
 
     while (!checkResult()) {
-
         if (!compute().length) {
-
             if (haveEmpty()) {
-
                 getMax();
-
             }
-
             setItem();
-
-            checkEnd();
         }
-    } 
-        alert("===成功===");
-        for (let i = 0; i < 9; i++) {
-            for (let j = 0; j < 9; j++) {
-                eleList[i][j].innerText = numList[i][j][0];
-                eleList[i][j].style.fontWeight = "bold";
-                eleList[i][j].style.color = "blue";
-            }
+    }
+    alert("===成功===");
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            eleList[i][j].innerText = numList[i][j][0];
         }
-}
-
-function goBack() {
-    console.log("goBakc函数")
-    deleteLine();
+    }
 }
 
 function haveEmpty() {
@@ -709,42 +609,21 @@ function haveEmpty() {
     return false;
 }
 
-function checkEnd() {
-    if (maxList[0][0].length === 0) {
-        if(checkResult()) {
-            alert("计算成功了！！！！")
-        } else {
-            alert("XXXXXXXX可能计算失败！XXXXXXXXXXXXX")
-        }
-    }
-}
-
 function setItem() {
-
     deleteLine();    
     let one = maxList[maxList.length - 1][0].shift();
     deleteLine();
     numList[one[0]][one[1]][0] = one[2];
-
-
-    //eleList[one[0]][one[1]].innerText = one[2];
-    //eleList[one[0]][one[1]].style.color = "red";
-
 }
 
 
 function deleteLine() {
-
     if (maxList[maxList.length - 1][0].length === 0) {
         maxList.pop()
-        //numList = clone(maxList[maxList.length - 1][1]);
     } else {
         numList = clone(maxList[maxList.length - 1][1]);
     }
 }
-
-
-
 
 function getOneMin (arr) {
 
@@ -823,9 +702,7 @@ function getMax() {
         obj[0] = tmp;
         obj[1] = clone(numList);
         maxList.push([obj[0], obj[1]])
-    } //else {
-        //console.log("getMax5函数...else...")
-   // }
+    } 
 }
 
 
